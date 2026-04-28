@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
+import { updateCart as updateCartApi } from '../utils/api';
 
 const CartContext = createContext();
 
@@ -16,9 +18,25 @@ export const CartProvider = ({ children }) => {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
+  const { user } = useAuth();
+
   useEffect(() => {
     localStorage.setItem('nike-cart', JSON.stringify(cart));
-  }, [cart]);
+    
+    // Sync with backend if user is logged in
+    const syncCart = async () => {
+      if (user && user.token) {
+        try {
+          await updateCartApi(cart, user.token);
+        } catch (error) {
+          console.error("Failed to sync cart with backend:", error);
+        }
+      }
+    };
+
+    const timer = setTimeout(syncCart, 1000); // Debounce sync
+    return () => clearTimeout(timer);
+  }, [cart, user]);
 
   const addToCart = (product, size = null) => {
     setCart((prev) => {

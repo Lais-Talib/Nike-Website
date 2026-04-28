@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { products } from '../data/products';
+import { getProducts } from '../utils/api';
 import ProductCard from '../components/ProductCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Filter, X } from 'lucide-react';
@@ -11,8 +11,24 @@ const Category = () => {
   const subCategoryParam = searchParams.get('subcategory');
   const searchQuery = searchParams.get('q');
   
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeSubCategory, setActiveSubCategory] = useState(subCategoryParam || 'All');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await getProducts();
+        setAllProducts(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     if (subCategoryParam) {
@@ -40,7 +56,7 @@ const Category = () => {
     setSearchParams(searchParams);
   };
 
-  const filteredProducts = products.filter(p => {
+  const filteredProducts = allProducts.filter(p => {
     const categoryMatch = id === 'all' || p.category.toLowerCase() === id?.toLowerCase();
     const subCategoryMatch = activeSubCategory === 'All' || p.subcategory === activeSubCategory;
     const searchMatch = !searchQuery || 
@@ -48,6 +64,15 @@ const Category = () => {
                         p.subcategory.toLowerCase().includes(searchQuery.toLowerCase());
     return categoryMatch && subCategoryMatch && searchMatch;
   });
+
+  if (loading) {
+    return (
+      <div className="pt-32 pb-20 min-h-screen text-center flex items-center justify-center flex-col bg-white dark:bg-[#0a0a0a]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white mb-4"></div>
+        <p className="text-gray-500 dark:text-gray-400 font-medium text-lg">Loading products...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-24 pb-20 min-h-screen bg-white dark:bg-[#0a0a0a] transition-colors duration-300">

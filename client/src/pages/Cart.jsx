@@ -134,10 +134,10 @@ const Cart = () => {
                   <span className="text-3xl font-black dark:text-white">${total.toFixed(2)}</span>
                 </div>
 
-                <button className="w-full bg-black dark:bg-white text-white dark:text-black py-5 rounded-full font-black text-lg uppercase tracking-tight hover:opacity-90 transition-all transform active:scale-[0.98] flex items-center justify-center space-x-3 shadow-xl">
+                <Link to="/checkout" className="w-full bg-black dark:bg-white text-white dark:text-black py-5 rounded-full font-black text-lg uppercase tracking-tight hover:opacity-90 transition-all transform active:scale-[0.98] flex items-center justify-center space-x-3 shadow-xl">
                   <span>Checkout</span>
                   <ArrowRight size={20} />
-                </button>
+                </Link>
               </div>
             </div>
           </div>

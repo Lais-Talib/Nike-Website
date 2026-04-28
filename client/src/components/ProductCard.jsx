@@ -34,7 +34,7 @@ const ProductCard = ({ product }) => {
     >
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-900 rounded-2xl mb-4 transition-colors duration-300">
-        {product.isNew && (
+        {product.isLatest && (
           <div className="absolute top-3 left-3 z-10 bg-white dark:bg-black text-black dark:text-white text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded">
             Just In
           </div>

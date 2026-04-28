@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Menu, X, Moon, Sun } from 'lucide-react';
+import { Search, Menu, X, Moon, Sun, User as UserIcon, LogOut, Package } from 'lucide-react';
 import { ShoppingBag, Heart } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
-import { products } from '../data/products';
+import { useAuth } from '../context/AuthContext';
+import { getProducts } from '../utils/api';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -14,14 +15,28 @@ const Navbar = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const { wishlist } = useWishlist();
   const { cartCount } = useCart();
+  const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [allProducts, setAllProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await getProducts();
+        setAllProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   // Filter products based on search query
   const searchResults = searchQuery.trim() 
-    ? products.filter(p => 
+    ? allProducts.filter(p => 
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
         p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.subcategory.toLowerCase().includes(searchQuery.toLowerCase())
@@ -178,6 +193,40 @@ const Navbar = () => {
                 </span>
               )}
             </Link>
+
+            {user ? (
+              <div className="flex items-center space-x-3 ml-2 pl-5 border-l border-gray-100 dark:border-gray-900">
+                <span className="text-xs font-black uppercase tracking-widest dark:text-white hidden lg:block">Hi, {user.name.split(' ')[0]}</span>
+                <Link 
+                  to="/my-orders"
+                  className={`p-2 rounded-full transition-colors ${
+                    isDarkMode ? 'hover:bg-gray-900 text-white' : 'hover:bg-gray-100 text-black'
+                  }`}
+                  title="My Orders"
+                >
+                  <Package size={20} />
+                </Link>
+                <button 
+                  onClick={logout}
+                  className={`p-2 rounded-full transition-colors ${
+                    isDarkMode ? 'hover:bg-gray-900 text-white' : 'hover:bg-gray-100 text-black'
+                  }`}
+                  title="Logout"
+                >
+                  <LogOut size={20} />
+                </button>
+              </div>
+            ) : (
+              <Link 
+                to="/login" 
+                className={`flex items-center space-x-2 ml-2 pl-5 border-l border-gray-100 dark:border-gray-900 font-black uppercase text-xs tracking-widest transition-colors ${
+                  isDarkMode ? 'text-white hover:text-gray-400' : 'text-black hover:text-gray-500'
+                }`}
+              >
+                <UserIcon size={18} />
+                <span>Sign In</span>
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -209,23 +258,53 @@ const Navbar = () => {
               <Link to="/category/kids" className="block dark:text-white">Kids</Link>
               <Link to="/category/sale" className="block text-red-600">Sale</Link>
               
-              <div className="flex space-x-10 pt-6 border-t border-gray-100 dark:border-gray-900">
-                <Link to="/wishlist" className="relative dark:text-white">
-                  <Heart size={30} />
-                  {wishlist.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                      {wishlist.length}
-                    </span>
-                  )}
-                </Link>
-                <Link to="/cart" className="relative dark:text-white">
-                  <ShoppingBag size={30} />
-                  {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-black dark:bg-white text-white dark:text-black text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                      {cartCount}
-                    </span>
-                  )}
-                </Link>
+              <div className="flex flex-col space-y-6 pt-6 border-t border-gray-100 dark:border-gray-900">
+                <div className="flex space-x-10">
+                  <Link to="/wishlist" className="relative dark:text-white">
+                    <Heart size={30} />
+                    {wishlist.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {wishlist.length}
+                      </span>
+                    )}
+                  </Link>
+                  <Link to="/cart" className="relative dark:text-white">
+                    <ShoppingBag size={30} />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-black dark:bg-white text-white dark:text-black text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {cartCount}
+                      </span>
+                    )}
+                  </Link>
+                </div>
+                
+                {user ? (
+                  <div className="flex flex-col space-y-4">
+                    <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Logged in as {user.name}</span>
+                    <Link 
+                      to="/my-orders"
+                      className="text-left font-black uppercase text-2xl tracking-tighter dark:text-white flex items-center space-x-3"
+                    >
+                      <Package size={28} />
+                      <span>My Orders</span>
+                    </Link>
+                    <button 
+                      onClick={logout}
+                      className="text-left font-black uppercase text-2xl tracking-tighter text-red-600 flex items-center space-x-3"
+                    >
+                      <LogOut size={28} />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                ) : (
+                  <Link 
+                    to="/login" 
+                    className="font-black uppercase text-2xl tracking-tighter dark:text-white flex items-center space-x-3"
+                  >
+                    <UserIcon size={28} />
+                    <span>Sign In</span>
+                  </Link>
+                )}
               </div>
             </div>
           </motion.div>

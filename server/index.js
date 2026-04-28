@@ -3,6 +3,12 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 
+// Route imports
+const productRoutes = require('./routes/productRoutes');
+const authRoutes = require('./routes/authRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const aiRoutes = require('./routes/aiRoutes');
+
 dotenv.config();
 
 const app = express();
@@ -16,39 +22,24 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Nike App Backend is running' });
 });
 
-// Products Route Placeholder
-app.get('/api/products', (req, res) => {
-  // Sample data returned
-  res.json({
-    success: true,
-    count: 2,
-    data: [
-      { id: 1, name: 'Air Jordan 1', price: 180 },
-      { id: 2, name: 'Nike Air Max 270', price: 150 }
-    ]
-  });
-});
+app.use('/api/products', productRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/ai', aiRoutes);
 
 const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB and start server
 const startServer = async () => {
   try {
-    // Uncomment when MongoDB URI is available
-    /*
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('MongoDB connected successfully');
-    */
-    console.log('MongoDB connection skipped for demo purposes');
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+    console.log(`MongoDB connected: ${conn.connection.host}`);
     
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
   } catch (error) {
-    console.error('Error starting server:', error);
+    console.error('Error starting server:', error.message);
     process.exit(1);
   }
 };

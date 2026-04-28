@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { products } from '../data/products';
+import { getProductById } from '../utils/api';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingBag, ChevronRight } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
@@ -15,8 +15,15 @@ const ProductDetail = () => {
   const { addToCart } = useCart();
 
   useEffect(() => {
-    const found = products.find(p => p.id === parseInt(id));
-    setProduct(found);
+    const fetchProduct = async () => {
+      try {
+        const { data } = await getProductById(id);
+        setProduct(data);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
+    };
+    fetchProduct();
     window.scrollTo(0, 0);
   }, [id]);
 
@@ -68,7 +75,7 @@ const ProductDetail = () => {
             transition={{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }}
           >
             <div className="bg-gray-50 dark:bg-gray-900 rounded-[2.5rem] overflow-hidden aspect-square lg:aspect-auto lg:h-[750px] flex items-center justify-center relative transition-colors duration-300">
-              {product.isNew && (
+              {product.isLatest && (
                 <div className="absolute top-8 left-8 z-10 bg-black dark:bg-white text-white dark:text-black text-xs font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-xl">
                   Just In
                 </div>

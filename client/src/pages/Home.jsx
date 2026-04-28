@@ -1,13 +1,25 @@
 import React from 'react';
 import Hero from '../components/Hero';
 import ProductCard from '../components/ProductCard';
-import { products } from '../data/products';
+import { getProducts } from '../utils/api';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
-  const featuredProducts = products.slice(0, 4);
+  const [featuredProducts, setFeaturedProducts] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await getProducts();
+        setFeaturedProducts(data.slice(0, 4));
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0a0a] transition-colors duration-300">
