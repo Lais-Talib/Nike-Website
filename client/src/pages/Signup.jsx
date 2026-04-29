@@ -11,15 +11,20 @@ const Signup = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  const [successMessage, setSuccessMessage] = useState('');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     setIsLoading(true);
     
     const result = await register(formData);
     
     if (result.success) {
-      navigate('/');
+      setSuccessMessage(result.message);
+      // Optional: Clear form
+      setFormData({ name: '', email: '', password: '' });
     } else {
       setError(result.message);
     }
@@ -46,6 +51,15 @@ const Signup = () => {
         {error && (
           <div className="bg-red-50 border border-red-100 text-red-500 px-4 py-3 rounded-xl mb-6 text-sm font-bold">
             {error}
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="bg-green-50 border border-green-100 text-green-600 px-4 py-6 rounded-2xl mb-6 text-sm font-bold text-center">
+            <Mail className="mx-auto mb-3" size={32} />
+            <p className="text-lg mb-2">Check your email!</p>
+            <p className="font-medium opacity-80">{successMessage}</p>
+            <Link to="/login" className="inline-block mt-4 text-black underline">Go to Login</Link>
           </div>
         )}
 

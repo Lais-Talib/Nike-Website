@@ -18,6 +18,8 @@ import OrderDetails from './pages/OrderDetails';
 import MyOrders from './pages/MyOrders';
 import AIAssistant from './components/AIAssistant';
 import ResetPassword from './pages/ResetPassword';
+import AdminDashboard from './pages/AdminDashboard';
+import VerifyEmail from './pages/VerifyEmail';
 
 function App() {
   return (
@@ -40,6 +42,8 @@ function App() {
                 <Route path="/order/:id" element={<OrderDetails />} />
                 <Route path="/my-orders" element={<MyOrders />} />
                 <Route path="/reset-password/:token" element={<ResetPassword />} />
+                <Route path="/verify-email/:token" element={<VerifyEmail />} />
+                <Route path="/admin" element={<AdminDashboard />} />
               </Routes>
             </main>
             <Footer />

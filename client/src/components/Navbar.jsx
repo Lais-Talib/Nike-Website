@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Menu, X, Moon, Sun, User as UserIcon, LogOut, Package } from 'lucide-react';
+import { Search, Menu, X, Moon, Sun, User as UserIcon, LogOut, Package, ShieldCheck } from 'lucide-react';
 import { ShoppingBag, Heart } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -197,6 +197,17 @@ const Navbar = () => {
             {user ? (
               <div className="flex items-center space-x-3 ml-2 pl-5 border-l border-gray-100 dark:border-gray-900">
                 <span className="text-xs font-black uppercase tracking-widest dark:text-white hidden lg:block">Hi, {user.name.split(' ')[0]}</span>
+                {user.isAdmin && (
+                  <Link 
+                    to="/admin"
+                    className={`p-2 rounded-full transition-colors ${
+                      isDarkMode ? 'hover:bg-gray-900 text-white' : 'hover:bg-gray-100 text-black'
+                    }`}
+                    title="Admin Dashboard"
+                  >
+                    <ShieldCheck size={20} />
+                  </Link>
+                )}
                 <Link 
                   to="/my-orders"
                   className={`p-2 rounded-full transition-colors ${
@@ -281,6 +292,15 @@ const Navbar = () => {
                 {user ? (
                   <div className="flex flex-col space-y-4">
                     <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Logged in as {user.name}</span>
+                    {user.isAdmin && (
+                      <Link 
+                        to="/admin"
+                        className="text-left font-black uppercase text-2xl tracking-tighter text-blue-600 flex items-center space-x-3"
+                      >
+                        <ShieldCheck size={28} />
+                        <span>Admin Dashboard</span>
+                      </Link>
+                    )}
                     <Link 
                       to="/my-orders"
                       className="text-left font-black uppercase text-2xl tracking-tighter dark:text-white flex items-center space-x-3"

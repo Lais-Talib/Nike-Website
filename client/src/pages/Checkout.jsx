@@ -54,7 +54,9 @@ const Checkout = () => {
       navigate(`/order/${data._id}`);
     } catch (error) {
       console.error("Order creation failed:", error);
-      alert("Failed to place order. Please try again.");
+      const message = error.response?.data?.message || "Failed to place order. Please try again.";
+      const details = error.response?.data?.error || "";
+      alert(`${message}${details ? `: ${details}` : ""}`);
     } finally {
       setIsLoading(false);
     }

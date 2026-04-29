@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send, Sparkles, User, Bot } from 'lucide-react';
-import { aiChat } from '../utils/api';
+import { aiChat, getProducts } from '../utils/api';
+import { useCart } from '../context/CartContext';
 
 const AIAssistant = () => {
+  const { addToCart } = useCart();
+  const [allProducts, setAllProducts] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([
@@ -11,6 +14,18 @@ const AIAssistant = () => {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await getProducts();
+        setAllProducts(data);
+      } catch (error) {
+        console.error("Error fetching products for AI:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -31,9 +46,27 @@ const AIAssistant = () => {
 
     try {
       const { data } = await aiChat(message, chatHistory);
-      setChatHistory(prev => [...prev, { role: 'assistant', text: data.text }]);
+      let aiText = data.text;
+      
+      // Parse for actions: [ACTION: ADD_TO_CART, ID: {id}]
+      const actionMatch = aiText.match(/\[ACTION: ADD_TO_CART, ID: (.*?)\]/);
+      if (actionMatch) {
+        const productId = actionMatch[1];
+        // Clean up text
+        aiText = aiText.replace(/\[ACTION: ADD_TO_CART, ID: (.*?)\]/, '').trim();
+        
+        // Find product and add to cart
+        const product = allProducts.find(p => p.id === parseInt(productId) || p.id === productId);
+        if (product) {
+          addToCart(product, "10"); // Default size 10 for demo purposes
+          aiText += " ✅ Done! I've added those to your cart.";
+        }
+      }
+
+      setChatHistory(prev => [...prev, { role: 'assistant', text: aiText }]);
     } catch (error) {
-      setChatHistory(prev => [...prev, { role: 'assistant', text: 'Sorry, I am having trouble connecting right now. Please try again later.' }]);
+      const errorMessage = error.response?.data?.message || 'Sorry, I am having trouble connecting right now. Please try again later.';
+      setChatHistory(prev => [...prev, { role: 'assistant', text: errorMessage }]);
     } finally {
       setIsLoading(false);
     }

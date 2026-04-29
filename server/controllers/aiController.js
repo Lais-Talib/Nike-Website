@@ -5,7 +5,7 @@ const Product = require('../models/Product');
 // @route   POST /api/ai/chat
 // @access  Public
 const getChatResponse = async (req, res) => {
-  const { message, chatHistory } = req.body;
+  const { message, chatHistory = [] } = req.body;
 
   try {
     console.log('AI Chat Request received:', message);
@@ -17,7 +17,7 @@ const getChatResponse = async (req, res) => {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "models/gemma-3-4b-it" });
+    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
     // Fetch all products to give context to AI
     const products = await Product.find({});
@@ -32,6 +32,13 @@ const getChatResponse = async (req, res) => {
       Here is our current product catalog:
       ${productContext}
       
+      NEW FEATURE: ACTIONS
+      You can now interact with the user's shopping cart.
+      If a user explicitly asks you to "add to cart", "buy this", or "I want this one", you should include a special command at the END of your message in exactly this format:
+      [ACTION: ADD_TO_CART, ID: {product_id}]
+      
+      Example: "Great choice! I've added the Air Jordan 1 to your cart for you. [ACTION: ADD_TO_CART, ID: 1]"
+      
       Guidelines:
       1. Be professional, enthusiastic, and helpful.
       2. If a user asks for recommendations, suggest specific shoes from the catalog above.
@@ -39,7 +46,7 @@ const getChatResponse = async (req, res) => {
       4. If we don't have exactly what they want, suggest the closest alternative.
       5. Keep responses concise but "premium" in tone.
       6. Use the product names exactly as they appear in the catalog.
-      7. Mention that users can find these shoes by searching for their name in the search bar.
+      7. ONLY use the [ACTION] tag if the user clearly wants to add the item to their cart.
     `;
 
     const chat = model.startChat({
@@ -56,10 +63,14 @@ const getChatResponse = async (req, res) => {
     const result = await chat.sendMessage(message);
     const response = await result.response;
     const text = response.text();
+    console.log('AI Response:', text);
 
     res.json({ text });
   } catch (error) {
     console.error('AI Chat Error:', error);
+    if (error.message && error.message.includes('leaked')) {
+      return res.status(403).json({ message: 'Gemini API Key reported as leaked. Please generate a new one at https://aistudio.google.com/app/apikey' });
+    }
     res.status(500).json({ message: 'AI Assistant is temporarily unavailable.' });
   }
 };

@@ -15,6 +15,20 @@ const Category = () => {
   const [loading, setLoading] = useState(true);
   const [activeSubCategory, setActiveSubCategory] = useState(subCategoryParam || 'All');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [selectedGenders, setSelectedGenders] = useState([]);
+  const [selectedSizes, setSelectedSizes] = useState([]);
+
+  const toggleGender = (gender) => {
+    setSelectedGenders(prev => 
+      prev.includes(gender) ? prev.filter(g => g !== gender) : [...prev, gender]
+    );
+  };
+
+  const toggleSize = (size) => {
+    setSelectedSizes(prev => 
+      prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
+    );
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -59,11 +73,16 @@ const Category = () => {
   const filteredProducts = allProducts.filter(p => {
     const categoryMatch = id === 'all' || p.category.toLowerCase() === id?.toLowerCase();
     const subCategoryMatch = activeSubCategory === 'All' || p.subcategory === activeSubCategory;
+    const genderMatch = selectedGenders.length === 0 || selectedGenders.includes(p.category);
     const searchMatch = !searchQuery || 
                         p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                         p.subcategory.toLowerCase().includes(searchQuery.toLowerCase());
-    return categoryMatch && subCategoryMatch && searchMatch;
+    const sizeMatch = selectedSizes.length === 0 || true; // Simulating size match
+    
+    return categoryMatch && subCategoryMatch && searchMatch && genderMatch && sizeMatch;
   });
+
+  const sizes = ['6', '7', '8', '9', '10', '11', '12'];
 
   if (loading) {
     return (
@@ -107,25 +126,49 @@ const Category = () => {
                 exit={{ width: 0, opacity: 0 }}
                 className="hidden md:block overflow-hidden flex-shrink-0"
               >
-                <div className="sticky top-28 space-y-8">
+                <div className="sticky top-28 space-y-12 pr-6">
+                  {/* Gender Filter */}
                   <div>
-                    <h3 className="font-bold mb-4 text-lg dark:text-white">Categories</h3>
-                    <ul className="space-y-3">
-                      {subCategories.map((sub) => (
-                        <li key={sub}>
-                          <button
-                            onClick={() => handleSubCategoryClick(sub)}
-                            className={`text-left w-full transition-all duration-200 ${
-                              activeSubCategory === sub 
-                                ? 'font-bold dark:text-white translate-x-1' 
-                                : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:translate-x-1'
+                    <h3 className="font-black uppercase tracking-tight mb-6 text-xs dark:text-white">Gender</h3>
+                    <div className="space-y-4">
+                      {['Men', 'Women', 'Kids'].map((gender) => (
+                        <label key={gender} className="flex items-center space-x-3 cursor-pointer group">
+                          <div 
+                            onClick={() => toggleGender(gender)}
+                            className={`w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center ${
+                              selectedGenders.includes(gender) 
+                                ? 'bg-black border-black dark:bg-white dark:border-white' 
+                                : 'border-gray-200 dark:border-gray-800 group-hover:border-black dark:group-hover:border-white'
                             }`}
                           >
-                            {sub}
-                          </button>
-                        </li>
+                            {selectedGenders.includes(gender) && <div className="w-2 h-2 bg-white dark:bg-black rounded-sm" />}
+                          </div>
+                          <span className={`text-sm font-bold transition-colors ${selectedGenders.includes(gender) ? 'dark:text-white' : 'text-gray-500 dark:text-gray-600'}`}>
+                            {gender}
+                          </span>
+                        </label>
                       ))}
-                    </ul>
+                    </div>
+                  </div>
+
+                  {/* Size Filter */}
+                  <div className="border-t border-gray-100 dark:border-gray-900 pt-8">
+                    <h3 className="font-black uppercase tracking-tight mb-6 text-xs dark:text-white">Size</h3>
+                    <div className="grid grid-cols-3 gap-2">
+                      {sizes.map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => toggleSize(size)}
+                          className={`py-3 rounded-lg border-2 text-[10px] font-black transition-all ${
+                            selectedSizes.includes(size)
+                              ? 'bg-black border-black text-white dark:bg-white dark:border-white dark:text-black'
+                              : 'border-gray-100 dark:border-gray-900 text-gray-400 dark:text-gray-600 hover:border-black dark:hover:border-white'
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </motion.div>

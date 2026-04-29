@@ -28,7 +28,86 @@ const getProductById = async (req, res) => {
   }
 };
 
+// @desc    Delete a product
+// @route   DELETE /api/products/:id
+// @access  Private/Admin
+const deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.findOne({ id: req.params.id });
+
+    if (product) {
+      await Product.deleteOne({ id: req.params.id });
+      res.json({ message: 'Product removed' });
+    } else {
+      res.status(404).json({ message: 'Product not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error deleting product' });
+  }
+};
+
+// @desc    Create a product
+// @route   POST /api/products
+// @access  Private/Admin
+const createProduct = async (req, res) => {
+  try {
+    const {
+      id, name, price, description, image, category, subcategory, color
+    } = req.body;
+
+    const product = new Product({
+      id,
+      name,
+      price,
+      description,
+      image,
+      category,
+      subcategory,
+      color,
+      user: req.user._id
+    });
+
+    const createdProduct = await product.save();
+    res.status(201).json(createdProduct);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error creating product', error: error.message });
+  }
+};
+
+// @desc    Update a product
+// @route   PUT /api/products/:id
+// @access  Private/Admin
+const updateProduct = async (req, res) => {
+  try {
+    const {
+      name, price, description, image, category, subcategory, color
+    } = req.body;
+
+    const product = await Product.findOne({ id: req.params.id });
+
+    if (product) {
+      product.name = name || product.name;
+      product.price = price || product.price;
+      product.description = description || product.description;
+      product.image = image || product.image;
+      product.category = category || product.category;
+      product.subcategory = subcategory || product.subcategory;
+      product.color = color || product.color;
+
+      const updatedProduct = await product.save();
+      res.json(updatedProduct);
+    } else {
+      res.status(404).json({ message: 'Product not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error updating product' });
+  }
+};
+
 module.exports = {
   getProducts,
-  getProductById
+  getProductById,
+  deleteProduct,
+  createProduct,
+  updateProduct
 };

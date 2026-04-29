@@ -72,6 +72,88 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Shop by Sport Section */}
+      <section className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-20 overflow-hidden">
+        <div className="flex justify-between items-end mb-10 px-2">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter dark:text-white">Shop by Sport</h2>
+          </div>
+        </div>
+
+        <div className="flex overflow-x-auto space-x-6 pb-10 no-scrollbar snap-x snap-mandatory">
+          {[
+            { name: "Running", image: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80" },
+            { name: "Basketball", image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80" },
+            { name: "Football", image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80" },
+            { name: "Training & Gym", image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" },
+            { name: "Tennis", image: "https://images.unsplash.com/flagged/photo-1576972405668-2d020a01cbfa?w=800" },
+            { name: "Skateboarding", image: "https://images.unsplash.com/photo-1547447134-cd3f5c716030?auto=format&fit=crop&w=800&q=80" }
+          ].map((sport, idx) => (
+            <motion.div 
+              key={idx}
+              whileHover={{ scale: 0.98 }}
+              className="flex-none w-[300px] md:w-[440px] aspect-[4/5] relative rounded-[2rem] overflow-hidden group snap-start cursor-pointer"
+            >
+              <img 
+                src={sport.image} 
+                alt={sport.name} 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+              <div className="absolute bottom-8 left-8 text-white">
+                <h3 className="text-2xl font-black uppercase tracking-tight mb-4">{sport.name}</h3>
+                <Link 
+                  to={`/category/all?subcategory=${sport.name}`}
+                  className="bg-white text-black px-6 py-2 rounded-full text-sm font-black uppercase tracking-tight hover:bg-gray-100 transition-colors"
+                >
+                  Shop
+                </Link>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Spotlight Section */}
+      <section className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-16">
+          <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter dark:text-white mb-4 italic">Spotlight</h2>
+          <p className="text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest text-xs md:text-sm max-w-2xl mx-auto">
+            Classic silhouettes and cutting-edge innovation to build your game from the ground up.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-8 gap-x-2 gap-y-10 max-w-5xl mx-auto">
+          {[
+            { name: "Air Jordan 1", image: "/spotlight/jordan.png", sub: "Jordan" },
+            { name: "Air Force 1", image: "/spotlight/af1.png", sub: "Lifestyle" },
+            { name: "Dunk Low", image: "/spotlight/dunk.png", sub: "Lifestyle" },
+            { name: "Air Max", image: "/spotlight/max.png", sub: "Lifestyle" },
+            { name: "Pegasus", image: "/spotlight/pegasus.png", sub: "Running" },
+            { name: "Jackets", image: "/spotlight/jacket.png", sub: "Clothing" },
+            { name: "Tees", image: "/spotlight/tee.png", sub: "Clothing" },
+            { name: "Caps", image: "/spotlight/cap.png", sub: "Accessories" }
+          ].map((item, idx) => (
+            <Link 
+              to={`/category/all?subcategory=${item.sub}`} 
+              key={idx}
+              className="flex flex-col items-center group"
+            >
+              <div className="w-16 h-16 md:w-24 md:h-24 lg:w-28 lg:h-28 flex items-center justify-center mb-3 overflow-hidden rounded-full shadow-md hover:shadow-lg transition-shadow border border-gray-100 dark:border-none bg-[#f6f6f6]">
+                <img 
+                  src={item.image} 
+                  alt={item.name} 
+                  className="w-[85%] h-[85%] object-contain transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <span className="text-[10px] sm:text-[11px] md:text-[12px] font-black uppercase tracking-tight text-center dark:text-white group-hover:underline underline-offset-4">
+                {item.name}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

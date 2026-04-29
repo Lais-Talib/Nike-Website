@@ -22,6 +22,9 @@ const Login = () => {
       navigate('/');
     } else {
       setError(result.message);
+      if (result.isNotVerified) {
+        // You could add logic here to resend the email if desired
+      }
     }
     setIsLoading(false);
   };
