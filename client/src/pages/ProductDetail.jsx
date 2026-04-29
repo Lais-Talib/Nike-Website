@@ -36,7 +36,13 @@ const ProductDetail = () => {
     );
   }
 
-  const sizes = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 13, 14];
+  const apparelSubcategories = ['Tops & T-Shirts', 'Hoodies', 'Jackets', 'Trousers'];
+  const isApparel = apparelSubcategories.includes(product.subcategory);
+  
+  const shoeSizes = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 13, 14];
+  const apparelSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  
+  const sizes = isApparel ? apparelSizes : shoeSizes;
   const isWishlisted = isInWishlist(product.id);
 
   const handleAddToBag = () => {
@@ -121,7 +127,7 @@ const ProductDetail = () => {
                         : 'border-gray-100 hover:border-black dark:border-gray-900 dark:hover:border-white text-gray-700 dark:text-gray-300'
                     } ${showSizeWarning && !selectedSize ? 'border-red-500 text-red-500' : ''}`}
                   >
-                    US {size}
+                    {!isApparel ? `US ${size}` : size}
                   </button>
                 ))}
               </div>

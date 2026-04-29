@@ -126,46 +126,57 @@ const Category = () => {
                 exit={{ width: 0, opacity: 0 }}
                 className="hidden md:block overflow-hidden flex-shrink-0"
               >
-                <div className="sticky top-28 space-y-12 pr-6">
-                  {/* Gender Filter */}
+                <div className="sticky top-28 pr-8 space-y-10 h-[calc(100vh-120px)] overflow-y-auto no-scrollbar pb-10">
+                  {/* Shoes Category */}
                   <div>
-                    <h3 className="font-black uppercase tracking-tight mb-6 text-xs dark:text-white">Gender</h3>
-                    <div className="space-y-4">
-                      {['Men', 'Women', 'Kids'].map((gender) => (
-                        <label key={gender} className="flex items-center space-x-3 cursor-pointer group">
-                          <div 
-                            onClick={() => toggleGender(gender)}
-                            className={`w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center ${
-                              selectedGenders.includes(gender) 
-                                ? 'bg-black border-black dark:bg-white dark:border-white' 
-                                : 'border-gray-200 dark:border-gray-800 group-hover:border-black dark:group-hover:border-white'
-                            }`}
-                          >
-                            {selectedGenders.includes(gender) && <div className="w-2 h-2 bg-white dark:bg-black rounded-sm" />}
-                          </div>
-                          <span className={`text-sm font-bold transition-colors ${selectedGenders.includes(gender) ? 'dark:text-white' : 'text-gray-500 dark:text-gray-600'}`}>
-                            {gender}
-                          </span>
-                        </label>
+                    <h3 className="font-bold text-lg mb-5 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-2">Shoes</h3>
+                    <div className="space-y-3">
+                      {['Lifestyle', 'Jordan', 'Running', 'Football', 'Training'].map((cat) => (
+                        <button 
+                          key={cat}
+                          onClick={() => handleSubCategoryClick(cat)}
+                          className={`block w-full text-left transition-colors ${
+                            activeSubCategory === cat 
+                              ? 'text-black font-bold dark:text-white' 
+                              : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                          }`}
+                        >
+                          {cat}
+                        </button>
                       ))}
                     </div>
                   </div>
 
-                  {/* Size Filter */}
-                  <div className="border-t border-gray-100 dark:border-gray-900 pt-8">
-                    <h3 className="font-black uppercase tracking-tight mb-6 text-xs dark:text-white">Size</h3>
-                    <div className="grid grid-cols-3 gap-2">
-                      {sizes.map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => toggleSize(size)}
-                          className={`py-3 rounded-lg border-2 text-[10px] font-black transition-all ${
-                            selectedSizes.includes(size)
-                              ? 'bg-black border-black text-white dark:bg-white dark:border-white dark:text-black'
-                              : 'border-gray-100 dark:border-gray-900 text-gray-400 dark:text-gray-600 hover:border-black dark:hover:border-white'
+                  {/* Clothing Category */}
+                  <div>
+                    <h3 className="font-bold text-lg mb-5 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-2">Apparel</h3>
+                    <div className="space-y-3">
+                      {['Tops & T-Shirts', 'Hoodies', 'Jackets', 'Trousers'].map((cat) => (
+                        <button 
+                          key={cat}
+                          onClick={() => handleSubCategoryClick(cat)}
+                          className={`block w-full text-left transition-colors ${
+                            activeSubCategory === cat 
+                              ? 'text-black font-bold dark:text-white' 
+                              : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
                           }`}
                         >
-                          {size}
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Price Filter */}
+                  <div className="pt-4">
+                    <h3 className="font-bold text-lg mb-5 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-2">Shop by Price</h3>
+                    <div className="space-y-3">
+                      {['Under $50', '$50 - $100', '$100 - $150', 'Over $150'].map((price) => (
+                        <button 
+                          key={price}
+                          className="block w-full text-left text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                        >
+                          {price}
                         </button>
                       ))}
                     </div>

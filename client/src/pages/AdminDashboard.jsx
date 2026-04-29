@@ -42,7 +42,7 @@ const AdminDashboard = () => {
     description: '',
     image: '',
     category: 'Men',
-    subcategory: 'Shoes',
+    subcategory: 'Running',
     color: ''
   });
 
@@ -97,13 +97,13 @@ const AdminDashboard = () => {
     } else {
       setEditingProduct(null);
       setFormData({
-        id: `nike-${Math.floor(Math.random() * 10000)}`,
+        id: Math.floor(Math.random() * 1000000),
         name: '',
         price: '',
         description: '',
         image: '',
         category: 'Men',
-        subcategory: 'Shoes',
+        subcategory: 'Running',
         color: ''
       });
     }
@@ -426,27 +426,69 @@ const AdminDashboard = () => {
                   </div>
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Subcategory</label>
-                    <input 
-                      type="text" 
-                      className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-black dark:focus:border-white outline-none transition-all dark:text-white font-bold"
+                    <select 
+                      className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-black dark:focus:border-white outline-none transition-all dark:text-white font-bold appearance-none"
                       value={formData.subcategory}
                       onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
-                    />
+                    >
+                      <option value="Running">Running</option>
+                      <option value="Jordan">Jordan</option>
+                      <option value="Lifestyle">Lifestyle</option>
+                      <option value="Football">Football</option>
+                      <option value="Training">Training</option>
+                      <option value="Sandal, Sliders and Flipflop">Sandal, Sliders and Flipflop</option>
+                      <option disabled>────── Apparel ──────</option>
+                      <option value="Tops & T-Shirts">Tops & T-Shirts</option>
+                      <option value="Hoodies">Hoodies</option>
+                      <option value="Jackets">Jackets</option>
+                      <option value="Trousers">Trousers</option>
+                    </select>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Image URL</label>
-                  <div className="flex gap-4">
-                    <input 
-                      type="text" 
-                      required
-                      className="flex-grow px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-black dark:focus:border-white outline-none transition-all dark:text-white font-bold"
-                      value={formData.image}
-                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    />
-                    <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0">
-                      {formData.image ? <img src={formData.image} className="w-full h-full object-cover" /> : <ImageIcon size={24} className="text-gray-300" />}
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400">Image</label>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Provide URL or Upload</span>
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex gap-4">
+                      <input 
+                        type="text" 
+                        placeholder="Paste image URL here..."
+                        className="flex-grow px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-black dark:focus:border-white outline-none transition-all dark:text-white font-bold"
+                        value={formData.image.startsWith('data:image') ? 'Uploaded from device' : formData.image}
+                        onChange={(e) => {
+                          if (e.target.value !== 'Uploaded from device') {
+                            setFormData({ ...formData, image: e.target.value });
+                          }
+                        }}
+                      />
+                      <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0">
+                        {formData.image ? <img src={formData.image} className="w-full h-full object-cover" /> : <ImageIcon size={24} className="text-gray-300" />}
+                      </div>
+                    </div>
+                    
+                    <div className="relative overflow-hidden w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-black dark:hover:border-white transition-colors cursor-pointer flex items-center justify-center group">
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setFormData({ ...formData, image: reader.result });
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                      <span className="text-sm font-bold text-gray-500 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white flex items-center transition-colors">
+                        <ImageIcon size={18} className="mr-2" /> 
+                        <span>Upload from device</span>
+                      </span>
                     </div>
                   </div>
                 </div>

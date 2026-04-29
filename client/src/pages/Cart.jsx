@@ -27,13 +27,9 @@ const Cart = () => {
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
             {/* Cart Items List */}
             <div className="w-full lg:w-2/3">
-              <AnimatePresence mode='popLayout'>
+              <div className="flex flex-col">
                 {cart.map((item) => (
-                  <motion.div 
-                    layout
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
+                  <div 
                     key={`${item.id}-${item.size}`} 
                     className="flex gap-6 py-8 border-b border-gray-100 dark:border-gray-900"
                   >
@@ -95,9 +91,9 @@ const Cart = () => {
                         </button>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
-              </AnimatePresence>
+              </div>
               
               <div className="mt-8">
                 <button 

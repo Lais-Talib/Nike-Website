@@ -18,7 +18,7 @@ const productSchema = new mongoose.Schema({
   subcategory: {
     type: String,
     required: true,
-    enum: ['Jordan', 'Running', 'Football', 'Sandal, Sliders and Flipflop']
+    enum: ['Jordan', 'Running', 'Football', 'Sandal, Sliders and Flipflop', 'Lifestyle', 'Training', 'Tops & T-Shirts', 'Hoodies', 'Jackets', 'Trousers']
   },
   price: {
     type: Number,
